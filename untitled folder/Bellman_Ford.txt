@@ -1,0 +1,76 @@
+#the algorithm and the printing function in the repo
+
+
+
+ # Function that prints the lowest cost path between two vertices
+    def path(self, parent, distance, j):
+        # If the current vertex is the start vertex
+        if parent[j] == -1 and j < self.vertices:
+            print(j, end=" ")
+            return 0
+        self.path(parent, distance, parent[j])
+        # Otherwise print vertex
+        if j < self.vertices:
+            print(j, end=" ")
+
+        return 1
+
+    # Implementation of the Bellman Ford Algorithm
+    def Bellman_Ford(self, start, end):
+        # Initializing the distance and parent lists
+        distance = [float("Inf")] * self.vertices
+        distance[start] = 0  # The start vertex has the distance 0
+        parent = [-1] * self.vertices
+
+        changed = True
+
+        # While there are still changes made to the distances
+        for i in range(1, self.vertices):
+            changed = False
+            # We go through all the edges and check whether we can improve the cost of the path
+            # from a vertex to another using the edge between them
+            for key in self.dict_cost:
+                if distance[key[0]] != float("Inf") and distance[key[0]] + self.dict_cost[key] < distance[key[1]]:
+                    # We modify the distance of the second vertex, change its parent to the first vertex
+                    distance[key[1]] = distance[key[0]] + self.dict_cost[key]
+                    parent[key[1]] = key[0]
+                    # We are still making changes
+                    changed = True
+            if not changed:
+                break
+
+        # Second Traversal for Identifying whether or not we have negative cycles
+        for key in self.dict_cost:
+            if distance[key[0]] != float("Inf") and distance[key[0]] + self.dict_cost[key] < distance[key[1]]:
+                return 0
+        # If we did not find a path to the edn vertex
+        if distance[end] == float("Inf"):
+            return -1
+        # Print the path from the start vertex to the evd vertex
+        self.path(parent, distance, end)
+        # Return the cost of the path
+        return distance[end]
+
+
+
+# the implementation in the ui
+
+
+
+def Bellman(self):
+        x = int(input("x: "))
+        if not self._graphs[self._current].check_vertex(x):
+            print("This vertex does not exist!")
+            return
+        y = int(input("y: "))
+        if not self._graphs[self._current].check_vertex(y):
+            print("This vertex does not exist!")
+            return
+
+        n = self._graphs[self._current].Bellman_Ford(x, y)
+        if n == 0:
+            print("The graph contains negative cycles!")
+        elif n == -1:
+            print("There is no walk from " + str(x) + " to " + str(y))
+        else:
+            print("is the path with the cost " + str(n))
